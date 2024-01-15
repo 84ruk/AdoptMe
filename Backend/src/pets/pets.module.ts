@@ -6,13 +6,13 @@ import { AuthModule } from './../auth/auth.module';
 import { PetsController } from './pets.controller';
 import { PetsService } from './pets.service';
 
-import { Pet } from './entities/pet.entity';
+import { Pet, PetImage } from './entities';
 
 @Module({
   controllers: [PetsController],
   providers: [PetsService],
   imports: [
-    TypeOrmModule.forFeature([ Pet ]),
+    TypeOrmModule.forFeature([ Pet, PetImage  ]),
     AuthModule,
   ],
   exports: [

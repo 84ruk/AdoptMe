@@ -17,26 +17,31 @@ import { validate as isUUID } from 'uuid';
 import { Pet } from './entities/pet.entity';
 import { User } from 'src/auth/entities/user.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PetImage } from './entities';
 
 @Injectable()
 export class PetsService {
   private readonly logger = new Logger('PetsService');
 
   constructor(
+
     @InjectRepository(Pet)
     private readonly petRepository: Repository<Pet>,
 
-    /*     @InjectRepository(ProductImage)
-    private readonly productImageRepository: Repository<ProductImage>,
- */
+    @InjectRepository(PetImage)
+    private readonly petImageRepository: Repository<PetImage>,
+
     private readonly dataSource: DataSource,
   ) {}
 
   async createPet(createPetDto: CreatePetDto, user: User) {
+
     try {
-      // Crear una nueva instancia de Pet y asignar los datos del DTO
+      const { images = [], ...petDetails } = createPetDto;
+
       const pet = this.petRepository.create({
-        ...createPetDto,
+        ...petDetails,
+        images: images.map( image => this.petImageRepository.create({ url: image }) ),
         rescuer: user, // Asignar el usuario al Pet
       });
 
@@ -46,7 +51,7 @@ export class PetsService {
       // Excluir el campo rescuer antes de devolver el objeto Pet
       const { rescuer, ...petWithoutRescuer } = pet;
 
-      return petWithoutRescuer;
+      return { petWithoutRescuer, images };
     } catch (error) {
       // Manejar errores de base de datos
       this.handleDBExceptions(error);

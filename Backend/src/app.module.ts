@@ -35,6 +35,7 @@ import { FilesModule } from './files/files.module';
       rootPath: join(__dirname,'..','public'), 
     }),
     PetsModule,
+    FilesModule,
     AuthModule,
   ],
 })

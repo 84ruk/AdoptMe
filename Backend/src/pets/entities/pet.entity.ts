@@ -1,7 +1,8 @@
 // pets/pet.entity.ts
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
+import { PetImage } from './file.entity';
 
 @Entity('pets')
 export class Pet {
@@ -17,6 +18,13 @@ export class Pet {
   @ManyToOne(() => User, user => user.pets, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'rescuerId' })
   rescuer: User;
+
+  @OneToMany(
+    () => PetImage,
+    (petImage) => petImage.pet,
+    { cascade: true, eager: true }
+  )
+  images?: PetImage[];
 
   @Column('text')
   location: string;
